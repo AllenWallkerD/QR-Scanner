@@ -1,0 +1,102 @@
+/* Overall container for the scan page */
+.scan-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #121212;
+    border-radius: 8px;
+    min-height: 100vh;
+    position: relative;
+  }
+  
+  /* Header styling */
+  .scan-header {
+    text-align: center;
+    padding: 10px 0;
+  }
+  
+  .welcome-text {
+    font-size: 1.5rem;
+    color: #fff;
+    margin: 0;
+  }
+  
+  /* Main section styling */
+  .scan-main {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Scanner section styling */
+  .scanner-section {
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* QR reader container styling */
+  .reader {
+    width: 100%;
+    margin-top: 20px;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+  }
+  
+  /* Button styling */
+  .btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, bottom 0.3s ease;
+    margin-top: 16px;
+  }
+  
+  /* Open scanner button: blue background */
+  .open-btn {
+    background-color: #007bff;
+    color: #fff;
+  }
+  .open-btn:hover {
+    background-color: #0056cc;
+  }
+  
+  /* Logout button: red background, default position at bottom right */
+  .logout-btn {
+    background-color: #dc3545;
+    color: #fff;
+    position: absolute;
+    right: 20px;
+    bottom: 120px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    transition: bottom 0.3s ease, background-color 0.2s ease;
+  }
+  
+  .logout-btn:hover {
+    background-color: #c82333;
+  }
+  
+  /* When scanner is open, move the logout button down a little bit */
+  .scan-container.scanner-open .logout-btn {
+    bottom: 20px; /* Adjust this value if needed */
+  }
+  
+  /* Error message styling */
+  .error-msg {
+    color: #e74c3c;
+    margin-top: 12px;
+  }
+  
+  /* Scan result styling */
+  .scan-result {
+    margin-top: 20px;
+    background-color: #1f2425;
+    padding: 10px;
+    border-radius: 6px;
+    color: #fff;
+    text-align: left;
+  }
+  
