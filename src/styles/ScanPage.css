@@ -90,6 +90,31 @@
     margin-top: 12px;
   }
   
+  /* Processing (loading) indicator after scanning */
+  .processing-message {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+  }
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #007bff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
   /* Scan result styling */
   .scan-result {
     margin-top: 20px;

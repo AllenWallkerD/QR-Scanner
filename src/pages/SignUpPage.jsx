@@ -6,34 +6,38 @@ import {
 } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { doc, setDoc } from 'firebase/firestore';
+import { useI18n } from '../i18n/i18n';
 import '../styles/SignUpPage.css';
 
-function translateSignUpError(code, fallback) {
+// Код ошибки Firebase -> ключ перевода
+function signUpErrorKey(code) {
   switch (code) {
     case 'auth/email-already-in-use':
-      return 'Бұл электронды пошта бұрын тіркелген.';
+      return 'auth.err.emailInUse';
     case 'auth/invalid-email':
-      return 'Электронды пошта дұрыс емес форматта.';
+      return 'auth.err.invalidEmail';
     case 'auth/weak-password':
-      return 'Құпия сөз өте қысқа немесе қарапайым.';
+      return 'auth.err.weakPassword';
     case 'auth/invalid-credential':
-      return 'Енгізілген деректер жарамсыз немесе ескірген.';
+      return 'auth.err.invalidCredential';
     default:
-      return fallback || 'Тіркелу сәтсіз аяқталды.';
+      return 'auth.err.signupDefault';
   }
 }
 
 export default function SignUpPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [studentId, setStudentId] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  // В состоянии храним ключ ошибки, перевод — при рендере
+  const [errorKey, setErrorKey] = useState('');
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    setErrorMsg('');
+    setErrorKey('');
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, {
@@ -47,38 +51,37 @@ export default function SignUpPage() {
       navigate('/scan');
     } catch (err) {
       console.error(err);
-      const message = translateSignUpError(err.code, err.message);
-      setErrorMsg(message);
+      setErrorKey(signUpErrorKey(err.code));
     }
   };
 
   return (
     <div className="signup-container">
-      <h2 className="signup-title">Тіркелу</h2>
-      {errorMsg && <p className="signup-error">{errorMsg}</p>}
+      <h2 className="signup-title">{t('signup.title')}</h2>
+      {errorKey && <p className="signup-error">{t(errorKey)}</p>}
       <form className="signup-form" onSubmit={handleSignUp}>
         <div className="signup-field">
-          <label>Студент ID:</label>
+          <label>{t('signup.studentId')}:</label>
           <input
             type="text"
             value={studentId}
             onChange={(e) => setStudentId(e.target.value)}
             required
-            placeholder="12345"
+            placeholder={t('signup.studentIdPlaceholder')}
           />
         </div>
         <div className="signup-field">
-          <label>Толық аты:</label>
+          <label>{t('signup.fullName')}:</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="Аты-жөніңіз"
+            placeholder={t('signup.fullNamePlaceholder')}
           />
         </div>
         <div className="signup-field">
-          <label>Электронды почта:</label>
+          <label>{t('auth.email')}:</label>
           <input
             type="email"
             value={email}
@@ -88,21 +91,21 @@ export default function SignUpPage() {
           />
         </div>
         <div className="signup-field">
-          <label>Құпия сөз:</label>
+          <label>{t('auth.password')}:</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            placeholder="Құпия сөз"
+            placeholder={t('auth.password')}
           />
         </div>
         <button className="signup-button" type="submit">
-          Тіркелу
+          {t('signup.button')}
         </button>
       </form>
       <p className="signup-footer">
-        Есептік жазбаңыз бар ма? <Link to="/signin">Кіру</Link>
+        {t('signup.footer')} <Link to="/signin">{t('signup.signinLink')}</Link>
       </p>
     </div>
   );

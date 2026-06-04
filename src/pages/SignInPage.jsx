@@ -2,51 +2,54 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
+import { useI18n } from '../i18n/i18n';
 import '../styles/SignInPage.css';
 
-function translateAuthError(code, fallback) {
+// Код ошибки Firebase -> ключ перевода
+function authErrorKey(code) {
   switch (code) {
     case 'auth/invalid-email':
-      return 'Электронды пошта дұрыс емес форматта.';
+      return 'auth.err.invalidEmail';
     case 'auth/user-disabled':
-      return 'Бұл есептік жазба уақытша бұғатталған.';
+      return 'auth.err.userDisabled';
     case 'auth/user-not-found':
-      return 'Мұндай есептік жазба тіркелмеген.';
+      return 'auth.err.userNotFound';
     case 'auth/wrong-password':
-      return 'Құпия сөз қате.';
+      return 'auth.err.wrongPassword';
     case 'auth/invalid-credential':
-      return 'Енгізілген деректер жарамсыз немесе ескірген.';
+      return 'auth.err.invalidCredential';
     default:
-      return fallback || 'Кіру сәтсіз аяқталды.';
+      return 'auth.err.signinDefault';
   }
 }
 
 export default function SignInPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  // В состоянии храним ключ ошибки, перевод — при рендере
+  const [errorKey, setErrorKey] = useState('');
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    setErrorMsg('');
+    setErrorKey('');
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/scan');
     } catch (err) {
       console.error(err);
-      const message = translateAuthError(err.code, err.message);
-      setErrorMsg(message);
+      setErrorKey(authErrorKey(err.code));
     }
   };
 
   return (
     <div className="signin-container">
-      <h2 className="signin-title">Кіру</h2>
-      {errorMsg && <p className="signin-error">{errorMsg}</p>}
+      <h2 className="signin-title">{t('signin.title')}</h2>
+      {errorKey && <p className="signin-error">{t(errorKey)}</p>}
       <form className="signin-form" onSubmit={handleSignIn}>
         <div className="signin-field">
-          <label>Электронды пошта:</label>
+          <label>{t('auth.email')}:</label>
           <input
             type="email"
             value={email}
@@ -56,21 +59,21 @@ export default function SignInPage() {
           />
         </div>
         <div className="signin-field">
-          <label>Құпия сөз:</label>
+          <label>{t('auth.password')}:</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            placeholder="Құпия сөз"
+            placeholder={t('auth.password')}
           />
         </div>
         <button className="signin-button" type="submit">
-          Кіру
+          {t('signin.button')}
         </button>
       </form>
       <p className="signin-footer">
-        Есептік жазбаңыз жоқ па ? <Link to="/signup">Тіркелу</Link>
+        {t('signin.footer')} <Link to="/signup">{t('signin.signupLink')}</Link>
       </p>
     </div>
   );

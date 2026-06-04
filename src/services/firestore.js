@@ -38,7 +38,8 @@ export const addAttendanceRecord = async ({
   scannedAt,
   valid,
   distance,
-  deviceFingerprint
+  deviceFingerprint,
+  status
 }) => {
   const colRef = collection(db, ATTENDANCE_COLLECTION);
   const docRef = await addDoc(colRef, {
@@ -50,9 +51,29 @@ export const addAttendanceRecord = async ({
     valid,
     distance,
     deviceFingerprint,
+    status,
     createdAt: new Date()
   });
   return docRef.id;
+};
+
+// Чтение документа сессии sessions/<id>; null, если не найден
+export const getClassSession = async (classSessionId) => {
+  const sessionRef = doc(db, 'sessions', classSessionId);
+  const snap = await getDoc(sessionRef);
+  return snap.exists() ? snap.data() : null;
+};
+
+// true, если у этого email уже есть запись посещения по данной сессии
+export const checkAlreadyMarked = async (sessionId, email) => {
+  const colRef = collection(db, ATTENDANCE_COLLECTION);
+  const q = query(
+    colRef,
+    where('sessionId', '==', sessionId),
+    where('email', '==', email)
+  );
+  const snapshot = await getDocs(q);
+  return !snapshot.empty;
 };
 
 export const fetchAllAttendance = async () => {
